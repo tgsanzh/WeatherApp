@@ -1,3 +1,88 @@
 <resources>
+
+    <!-- Общие -->
     <string name="app_name">WeatherApp</string>
+    <string name="screen_main">Главная</string>
+    <string name="screen_weather">Погода</string>
+
+    <!-- Город / текущее -->
+    <string name="city_almaty">Алматы</string>
+    <string name="city_astana">Астана</string>
+    <string name="current_location">Текущее место</string>
+    <string name="work_location">Работа</string>
+
+    <!-- Погода -->
+    <string name="weather_sunny">В основном солнечно</string>
+    <string name="weather_cloudy">В основном облачно</string>
+
+    <!-- Температура -->
+    <string name="temperature">11°</string>
+    <string name="temperature_negative">-10°</string>
+    <string name="temperature_high">22°</string>
+
+    <!-- Макс / Мин -->
+    <string name="temp_max_min">Макс.: %1$d°, мин.: %2$d°</string>
+
+    <!-- Время -->
+    <string name="time_now">Сейчас</string>
+    <string name="sunset">Закат</string>
+    <string name="sunrise">Восход</string>
+
+    <!-- Прогноз -->
+    <string name="forecast_10_days">ПРОГНОЗ НА 10 ДНЕЙ</string>
+    <string name="today">Сегодня</string>
+
+    <!-- Дни недели -->
+    <string name="day_sat">Сб</string>
+    <string name="day_sun">Вс</string>
+    <string name="day_mon">Пн</string>
+    <string name="day_tue">Вт</string>
+    <string name="day_wed">Ср</string>
+    <string name="day_thu">Чт</string>
+    <string name="day_fri">Пт</string>
+
+    <!-- Ветер -->
+    <string name="wind">Ветер</string>
+    <string name="wind_speed">%1$d км/ч</string>
+    <string name="wind_gusts">Порывы ветра</string>
+    <string name="wind_direction">Направление</string>
+
+    <!-- UV -->
+    <string name="uv_index">УФ-ИНДЕКС</string>
+    <string name="uv_low">Низкий</string>
+    <string name="uv_low_desc">Останется низким до конца дня.</string>
+
+    <!-- Средняя температура -->
+    <string name="average">В СРЕДНЕМ</string>
+    <string name="average_temp">На %1$d°</string>
+    <string name="average_desc">&gt; среднесуточного максимума</string>
+
+    <!-- Ощущается как -->
+    <string name="feels_like">ОЩУЩАЕТСЯ КАК</string>
+    <string name="feels_like_desc">По ощущениям теплее, чем на самом деле.</string>
+
+    <!-- Влажность -->
+    <string name="humidity">ВЛАЖНОСТЬ</string>
+    <string name="humidity_value">%1$d %%</string>
+    <string name="dew_point">Точка росы сейчас: %1$d°.</string>
+
+    <!-- Давление -->
+    <string name="pressure">ДАВЛЕНИЕ</string>
+    <string name="pressure_value">%1$d</string>
+    <string name="pressure_unit">гПа</string>
+
+    <!-- Поиск -->
+    <string name="search_hint">Поиск города или аэропорта</string>
+
+    <!-- Меню -->
+    <string name="edit_list">Изменить список</string>
+    <string name="notifications">Уведомления</string>
+    <string name="celsius">Градусы Цельсия</string>
+    <string name="fahrenheit">Градусы Фаренгейта</string>
+    <string name="units">Единицы</string>
+    <string name="report_problem">Сообщить о проблеме</string>
+
+    <!-- Дополнительно -->
+    <string name="details_link">Подробнее о метеорологических и картографических данных</string>
+
 </resources>
