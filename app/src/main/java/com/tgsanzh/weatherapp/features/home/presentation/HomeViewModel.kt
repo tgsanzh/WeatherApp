@@ -4,12 +4,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tgsanzh.weatherapp.features.home.domain.usecases.GetLocationUseCase
+import com.tgsanzh.weatherapp.features.home.domain.usecases.GetWeatherUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    val getLocationUseCase: GetLocationUseCase
+    val getLocationUseCase: GetLocationUseCase,
+    val getWeatherUseCase: GetWeatherUseCase
 ): ViewModel() {
 
     private val _state = MutableStateFlow(HomeUiState())
@@ -21,10 +23,11 @@ class HomeViewModel(
                 viewModelScope.launch {
                     _state.value = _state.value.copy(isLoading = true)
 
-                    val result = getLocationUseCase.getLocation()
-                    if (result != null)
+                    val location = getLocationUseCase.getLocation()
+                    if (location != null)
                     {
-                        _state.value = _state.value.copy(location = result)
+                        _state.value = _state.value.copy(location = location)
+                        val result = getWeatherUseCase.getWeather(location)
                         Log.d("Location: ", result.toString())
                     }
                     else {
