@@ -1,22 +1,58 @@
 package com.tgsanzh.weatherapp.features.home.data.repository_impl
 
-import com.tgsanzh.weatherapp.core.location.domain.models.Location
-import com.tgsanzh.weatherapp.features.home.data.service.HomeService
-import com.tgsanzh.weatherapp.features.home.data.dto.toDomain
+import com.tgsanzh.weatherapp.core.error.toAppError
+import com.tgsanzh.weatherapp.core.location.data.datasource.LocationDataSource
+import com.tgsanzh.weatherapp.core.result.AppResult
+import com.tgsanzh.weatherapp.features.home.data.local.dao.WeatherDao
+import com.tgsanzh.weatherapp.features.home.data.local.entities.WeatherCacheEntity
+import com.tgsanzh.weatherapp.features.home.data.local.mappers.WeatherConverter
+import com.tgsanzh.weatherapp.features.home.data.local.mappers.toDomain
+import com.tgsanzh.weatherapp.features.home.data.remote.service.HomeService
 import com.tgsanzh.weatherapp.features.home.domain.models.Weather
 import com.tgsanzh.weatherapp.features.home.domain.repository.HomeRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import com.tgsanzh.weatherapp.BuildConfig
 
 class HomeRepositoryImpl(
-    val homeService: HomeService
-): HomeRepository {
-    override suspend fun getWeather(location: Location): Weather {
-        val result = homeService.getWeatherByLocation(
-            lon = location.lon,
-            lat = location.lat,
-            apiKey = "9794f80fc878d08bf18e59b743438816",
-            lang = "ru"
-        ).toDomain()
+    private val locationDataSource: LocationDataSource,
+    private val homeService: HomeService,
+    private val dao: WeatherDao,
+    private val converter: WeatherConverter,
+) : HomeRepository {
 
-        return result
+    override fun observeWeather(): Flow<Weather> {
+        return dao.observe()
+            .filterNotNull()
+            .map { it.toDomain(converter) }
+    }
+
+    override suspend fun refresh(): AppResult<Unit> {
+        val location = when (val result = locationDataSource.getLocation()) {
+            is AppResult.Error -> return result
+            is AppResult.Success -> result.data
+        }
+
+        return try {
+            val dto = homeService.getWeatherByLocation(
+                lon = location.lon,
+                lat = location.lat,
+                lang = "ru",
+                apiKey = BuildConfig.API_KEY,
+                exclude = "minutely,current"
+            )
+
+            dao.insert(
+                WeatherCacheEntity(
+                    responseJson = converter.fromDto(dto),
+                    updatedAt = System.currentTimeMillis()
+                )
+            )
+
+            AppResult.Success(Unit)
+        } catch (e: Exception) {
+            AppResult.Error(e.toAppError())
+        }
     }
 }
