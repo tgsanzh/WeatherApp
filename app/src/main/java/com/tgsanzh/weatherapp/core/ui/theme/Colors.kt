@@ -21,11 +21,11 @@ val primaryColors = PrimaryColors(
     backgroundGradientTop = Color(0xFF6FB1FF),
     backgroundGradientBottom = Color(0xFF2C5EA8),
 
-    card = Color.White.copy(alpha = 0.15f),
+    card = Color(0xFF377DC3).copy(alpha = 0.6f),
     cardBorder = Color.White.copy(alpha = 0.2f),
 
     textPrimary = Color.White,
-    textSecondary = Color.White.copy(alpha = 0.7f),
+    textSecondary = Color(0xFFC9FFFA),
     textTertiary = Color.White.copy(alpha = 0.5f),
 
     accentBlue = Color(0xFF60A5FA),

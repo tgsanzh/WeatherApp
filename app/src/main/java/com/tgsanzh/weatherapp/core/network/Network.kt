@@ -1,5 +1,6 @@
 package com.tgsanzh.weatherapp.core.network
 
+import com.tgsanzh.weatherapp.BuildConfig
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -12,7 +13,11 @@ fun getOkHttp(
     networkConnectionInterceptor: NetworkConnectionInterceptor
 ): OkHttpClient {
     val logging = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+        level = if (BuildConfig.DEBUG) {
+            HttpLoggingInterceptor.Level.BODY
+        } else {
+            HttpLoggingInterceptor.Level.NONE
+        }
     }
 
     return OkHttpClient
