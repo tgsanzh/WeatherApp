@@ -7,9 +7,9 @@ import com.tgsanzh.weatherapp.features.home.domain.repository.HomeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class GetWeatherUseCaseImpl(
+class ObserveWeatherUseCaseImpl(
     private val homeRepository: HomeRepository
-) : GetWeatherUseCase {
+) : ObserveWeatherUseCase {
 
     override fun observeWeather(): Flow<AppResult<Weather>> {
         return homeRepository.observeWeather()
@@ -20,9 +20,5 @@ class GetWeatherUseCaseImpl(
                     AppResult.Success(weather)
                 }
             }
-    }
-
-    override suspend fun refresh(): AppResult<Unit> {
-        return homeRepository.refresh()
     }
 }

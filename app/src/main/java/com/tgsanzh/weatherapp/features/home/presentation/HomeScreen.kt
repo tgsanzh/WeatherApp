@@ -42,6 +42,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tgsanzh.weatherapp.R
 import com.tgsanzh.weatherapp.core.error.toMessage
+import com.tgsanzh.weatherapp.core.ui.components.PrimaryCard
+import com.tgsanzh.weatherapp.core.ui.components.PrimaryInformationCard
 import com.tgsanzh.weatherapp.core.ui.theme.primaryColors
 import com.tgsanzh.weatherapp.core.ui.theme.primaryTypography
 import com.tgsanzh.weatherapp.features.home.presentation.mappers.WeatherBackgroundMapper
@@ -390,48 +392,17 @@ private fun AverageAndFeelsLikeSection(today: DailyUi) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Card(
-            colors = CardDefaults.cardColors().copy(
-                containerColor = primaryColors.card,
-            ),
-            modifier = Modifier
-                .weight(1f)
-                .heightIn(min = 176.dp)
+
+        PrimaryInformationCard(
+            headerIcon = painterResource(R.drawable.ic_graph),
+            headerText = stringResource(R.string.average),
+            valueText = stringResource(R.string.average_temp, (today.tempMax - today.tempMin).toString()),
+            modifier = Modifier.weight(1f),
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_graph),
-                        contentDescription = "Graph Icon",
-                        tint = primaryColors.textTertiary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.average),
-                        style = primaryTypography.bodyTransparent,
-                    )
-                }
-                Text(
-                    text = stringResource(
-                        R.string.average_temp,
-                        (today.tempMax - today.tempMin).toString() //TODO
-                    ),
-                    style = primaryTypography.city,
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
                 Text(
                     text = stringResource(R.string.average_desc),
                     style = primaryTypography.body,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp, top = 4.dp)
                 )
 
                 Row(
@@ -460,66 +431,32 @@ private fun AverageAndFeelsLikeSection(today: DailyUi) {
                         style = primaryTypography.caption
                     )
                 }
-            }
         }
-        // Second
-        Card(
-            colors = CardDefaults.cardColors().copy(
-                containerColor = primaryColors.card,
+
+        PrimaryInformationCard(
+            headerIcon = painterResource(R.drawable.ic_thermometer),
+            headerText = stringResource(R.string.feels_like),
+            valueText = stringResource(
+                R.string.temperature,
+                today.feelsLike.toString()
             ),
-            modifier = Modifier
-                .weight(1f)
-                .heightIn(min = 176.dp)
+            modifier = Modifier.weight(1f)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_thermometer),
-                        contentDescription = "Graph Icon",
-                        tint = primaryColors.textTertiary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.feels_like),
-                        style = primaryTypography.bodyTransparent,
-                    )
-                }
-                Text(
-                    text = stringResource(
-                        R.string.temperature,
-                        today.feelsLike.toString()
-                    ),
-                    style = primaryTypography.city,
-                    modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
-                )
-                Text(
-                    text =  if (today.temperature <= today.feelsLike)
-                        stringResource(R.string.feels_like_higher)
-                    else
-                        stringResource(R.string.feels_like_lower),
-                    style = primaryTypography.bodyNormal,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-            }
+            Text(
+                text =  if (today.temperature <= today.feelsLike)
+                    stringResource(R.string.feels_like_higher)
+                else
+                    stringResource(R.string.feels_like_lower),
+                style = primaryTypography.bodyNormal,
+                modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
+            )
         }
     }
 }
 
 @Composable
 private fun WindSection(today: DailyUi) {
-    Card(
-        colors = CardDefaults.cardColors().copy(
-            containerColor = primaryColors.card,
-        ),
+    PrimaryCard (
         modifier = Modifier
             .fillMaxWidth()
     ) {
@@ -602,85 +539,24 @@ private fun UvAndTimeSection(today: DailyUi) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Card(
-            colors = CardDefaults.cardColors().copy(
-                containerColor = primaryColors.card,
-            ),
-            modifier = Modifier
-                .weight(1f)
-                .heightIn(min = 176.dp)
+        PrimaryInformationCard(
+            headerIcon = painterResource(R.drawable.ic_sun),
+            headerText = stringResource(R.string.uv_index),
+            valueText = today.uvi.toString(),
+            modifier = Modifier.weight(1f)
+        )
+
+        PrimaryInformationCard(
+            headerIcon = painterResource(R.drawable.ic_sunset),
+            headerText = stringResource(R.string.sunset),
+            valueText = today.sunset,
+            modifier = Modifier.weight(1f),
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_sun),
-                        contentDescription = "sun Icon",
-                        tint = primaryColors.textTertiary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.uv_index),
-                        style = primaryTypography.bodyTransparent,
-                    )
-                }
-                Text(
-                    text = today.uvi.toString(),
-                    style = primaryTypography.city,
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
-            }
-        }
-        // Second
-        Card(
-            colors = CardDefaults.cardColors().copy(
-                containerColor = primaryColors.card,
-            ),
-            modifier = Modifier
-                .weight(1f)
-                .heightIn(min = 176.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_sunset),
-                        contentDescription = "sunset Icon",
-                        tint = primaryColors.textTertiary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.sunset),
-                        style = primaryTypography.bodyTransparent,
-                    )
-                }
-                Text(
-                    text = today.sunset,
-                    style = primaryTypography.city,
-                    modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
-                )
-                Text(
-                    text = stringResource(R.string.sunrise, today.sunrise),
-                    style = primaryTypography.bodyNormal,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-            }
+            Text(
+                text = stringResource(R.string.sunrise, today.sunrise),
+                style = primaryTypography.bodyNormal,
+                modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
+            )
         }
     }
 }
@@ -691,80 +567,18 @@ private fun HumidityAndPressureSection(today: DailyUi) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Card(
-            colors = CardDefaults.cardColors().copy(
-                containerColor = primaryColors.card,
-            ),
-            modifier = Modifier
-                .weight(1f)
-                .heightIn(min = 176.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_humidity),
-                        contentDescription = "humidity Icon",
-                        tint = primaryColors.textTertiary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.humidity),
-                        style = primaryTypography.bodyTransparent,
-                    )
-                }
-                Text(
-                    text = stringResource(R.string.humidity_value, today.humidity.toString()),
-                    style = primaryTypography.city,
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
-            }
-        }
-        // Second
-        Card(
-            colors = CardDefaults.cardColors().copy(
-                containerColor = primaryColors.card,
-            ),
-            modifier = Modifier
-                .weight(1f)
-                .heightIn(min = 176.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_squeeze),
-                        contentDescription = "pressure Icon",
-                        tint = primaryColors.textTertiary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.pressure),
-                        style = primaryTypography.bodyTransparent,
-                    )
-                }
-                Text(
-                    text = stringResource(R.string.pressure_value, today.pressure.toString()),
-                    style = primaryTypography.city,
-                    modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
-                )
-            }
-        }
+        PrimaryInformationCard(
+            headerIcon = painterResource(R.drawable.ic_humidity),
+            headerText = stringResource(R.string.humidity),
+            valueText = stringResource(R.string.humidity_value, today.humidity.toString()),
+            modifier = Modifier.weight(1f),
+        )
+
+        PrimaryInformationCard(
+            headerIcon = painterResource(R.drawable.ic_squeeze),
+            headerText = stringResource(R.string.pressure),
+            valueText = stringResource(R.string.pressure_value, today.pressure.toString()),
+            modifier = Modifier.weight(1f),
+        )
     }
 }
