@@ -44,6 +44,7 @@ class LocationDataSource(
                     AppResult.Error(AppError.Location.Disabled),
                     null
                 )
+                return@suspendCancellableCoroutine
             }
 
             fusedClient.getCurrentLocation(

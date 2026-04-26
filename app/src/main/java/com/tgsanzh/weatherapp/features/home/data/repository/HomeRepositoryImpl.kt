@@ -1,4 +1,4 @@
-package com.tgsanzh.weatherapp.features.home.data.repository_impl
+package com.tgsanzh.weatherapp.features.home.data.repository
 
 import com.tgsanzh.weatherapp.core.error.toAppError
 import com.tgsanzh.weatherapp.core.location.data.datasource.LocationDataSource

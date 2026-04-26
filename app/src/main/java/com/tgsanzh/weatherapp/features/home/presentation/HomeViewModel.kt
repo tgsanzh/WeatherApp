@@ -5,18 +5,26 @@ import androidx.lifecycle.viewModelScope
 import com.tgsanzh.weatherapp.core.error.AppError
 import com.tgsanzh.weatherapp.core.result.AppResult
 import com.tgsanzh.weatherapp.features.home.domain.models.Weather
-import com.tgsanzh.weatherapp.features.home.domain.usecases.GetWeatherUseCase
+import com.tgsanzh.weatherapp.features.home.domain.usecases.ObserveWeatherUseCase
+import com.tgsanzh.weatherapp.features.home.domain.usecases.RefreshWeatherUseCase
 import com.tgsanzh.weatherapp.features.home.presentation.mappers.toUi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val getWeatherUseCase: GetWeatherUseCase
+    private val observeUseCase: ObserveWeatherUseCase,
+    private val refreshUseCase: RefreshWeatherUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeUiState())
     val state = _state.asStateFlow()
+
+    private val _effect = MutableSharedFlow<HomeEffect>()
+    val effect = _effect.asSharedFlow()
 
     init {
         observeWeather()
@@ -29,31 +37,37 @@ class HomeViewModel(
             }
 
             HomeEvent.NoGpsPermission -> {
-                _state.value = _state.value.copy(
-                    isLoading = false,
-                    error = AppError.Location.NoPermission
-                )
+                _state.update { current ->
+                    current.copy(
+                        isLoading = false,
+                        error = AppError.Location.NoPermission
+                    )
+                }
             }
         }
     }
 
     private fun observeWeather() {
         viewModelScope.launch {
-            getWeatherUseCase.observeWeather()
+            observeUseCase.observeWeather()
                 .collect { weather ->
                     when (weather) {
                         is AppResult.Error -> {
-                            _state.value = _state.value.copy(
-                                isLoading = false,
-                                error = weather.error
-                            )
+                            _state.update { current ->
+                                current.copy(
+                                    isLoading = false,
+                                    error = weather.error
+                                )
+                            }
                         }
                         is AppResult.Success<Weather> -> {
-                            _state.value = _state.value.copy(
-                                weather = weather.data.toUi(),
-                                isLoading = false,
-                                error = null
-                            )
+                            _state.update { current ->
+                                current.copy(
+                                    weather = weather.data.toUi(),
+                                    isLoading = false,
+                                    error = null
+                                )
+                            }
                         }
                     }
                 }
@@ -64,18 +78,22 @@ class HomeViewModel(
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
 
-            when (val result = getWeatherUseCase.refresh()) {
+            when (val result = refreshUseCase.refresh()) {
                 is AppResult.Error -> {
-                    _state.value = _state.value.copy(
-                        error = result.error,
-                        isLoading = false
-                    )
+                    _state.update { current ->
+                        current.copy(
+                            error = result.error,
+                            isLoading = false
+                        )
+                    }
                 }
                 is AppResult.Success -> {
-                    _state.value = _state.value.copy(
-                        error = null,
-                        isLoading = false
-                    )
+                    _state.update { current ->
+                        current.copy(
+                            error = null,
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }

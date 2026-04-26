@@ -4,7 +4,6 @@ import com.tgsanzh.weatherapp.core.result.AppResult
 import com.tgsanzh.weatherapp.features.home.domain.models.Weather
 import kotlinx.coroutines.flow.Flow
 
-interface GetWeatherUseCase {
+interface ObserveWeatherUseCase {
      fun observeWeather(): Flow<AppResult<Weather>>
-     suspend fun refresh(): AppResult<Unit>
 }
