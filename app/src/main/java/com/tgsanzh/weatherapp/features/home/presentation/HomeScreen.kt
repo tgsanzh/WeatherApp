@@ -1,8 +1,5 @@
 package com.tgsanzh.weatherapp.features.home.presentation
 
-import android.Manifest
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -36,8 +33,12 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,22 +56,25 @@ import java.util.Locale
 
 @Composable
 fun HomeScreen(state: HomeUiState, onEvent: (HomeEvent) -> (Unit)) {
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            if (isGranted) {
-                onEvent(HomeEvent.GetData)
-            }
-            else {
-                onEvent(HomeEvent.NoGpsPermission)
-            }
-        }
-    )
-    LaunchedEffect(Unit) {
-        launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-    }
 
     val refreshState = rememberPullToRefreshState()
+    val lazyColumnState = rememberLazyListState()
+
+    val alpha by remember {
+    derivedStateOf {
+        val scrollOffset = lazyColumnState.firstVisibleItemScrollOffset
+        val firstIndex = lazyColumnState.firstVisibleItemIndex
+        val fadeDistance = 300f
+
+        if (firstIndex >= 1) 0f
+        else (1f - (scrollOffset / fadeDistance)).coerceIn(0f, 1f)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        onEvent(HomeEvent.GetData)
+    }
+
 
     Box(
         modifier = Modifier.background(
@@ -98,68 +102,85 @@ fun HomeScreen(state: HomeUiState, onEvent: (HomeEvent) -> (Unit)) {
             onRefresh = { onEvent(HomeEvent.GetData) },
             state = refreshState
         ) {
-            LazyColumn (
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(vertical = 16.dp),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxSize(),
-            ) {
-                if (!state.isLoading) {
-                    if (state.weather != null) {
-                        item {
-                            Header(
-                                weather = state.weather
-                            )
-                        }
-                        item {
-                            Spacer(
-                                Modifier.height(80.dp)
-                            )
-                            HourlyCard(
-                                hours = state.weather.hourly,
-                                todaySummary = state.weather.today.summary
-                            )
-                        }
-                        item {
-                            ForecastEightDays(
-                                days = state.weather.daily
-                            )
-                        }
-                        item {
-                            AverageAndFeelsLikeSection(
-                                today = state.weather.today
-                            )
-                        }
-                        item {
-                            WindSection(
-                                today = state.weather.today
-                            )
-                        }
-                        item {
-                            UvAndTimeSection(
-                                today = state.weather.today
-                            )
-                        }
-                        item {
-                            HumidityAndPressureSection(
-                                today = state.weather.today
-                            )
-                        }
-                    }
-                    else {
-                        item {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = state.error?.toMessage() ?: "Загрузка данных невозможна",
-                                    style = primaryTypography.city,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth().padding(top = 400.dp)
+            Column {
+                if (state.weather != null) {
+                    Spacer(
+                        modifier = Modifier.height(24.dp)
+                    )
+                    HeaderSmall(
+                        weather = state.weather,
+                        Modifier.alpha(1 - alpha).height(40.dp)
+                    )
+                    Spacer(
+                        modifier = Modifier.height(8.dp)
+                    )
+                }
+
+                LazyColumn(
+                    state = lazyColumnState,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxSize(),
+                ) {
+                    if (!state.isLoading) {
+                        if (state.weather != null) {
+                            item {
+                                Header(
+                                    weather = state.weather,
+                                    modifier = Modifier.alpha(alpha)
                                 )
+                            }
+                            item {
+                                Spacer(
+                                    Modifier.height(80.dp * (alpha))
+                                )
+                                HourlyCard(
+                                    hours = state.weather.hourly,
+                                    todaySummary = state.weather.today.summary
+                                )
+                            }
+                            item {
+                                ForecastEightDays(
+                                    days = state.weather.daily
+                                )
+                            }
+                            item {
+                                AverageAndFeelsLikeSection(
+                                    today = state.weather.today
+                                )
+                            }
+                            item {
+                                WindSection(
+                                    today = state.weather.today
+                                )
+                            }
+                            item {
+                                UvAndTimeSection(
+                                    today = state.weather.today
+                                )
+                            }
+                            item {
+                                HumidityAndPressureSection(
+                                    today = state.weather.today
+                                )
+                            }
+                        } else {
+                            item {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = state.error?.toMessage()
+                                            ?: "Загрузка данных невозможна",
+                                        style = primaryTypography.city,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth().padding(top = 400.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -176,17 +197,17 @@ fun HomeScreen(state: HomeUiState, onEvent: (HomeEvent) -> (Unit)) {
 }
 
 @Composable
-private fun Header(weather: WeatherUi) {
-    Spacer(
-        Modifier.height(80.dp)
-    )
+private fun Header(
+    weather: WeatherUi,
+    modifier: Modifier = Modifier
+) {
 
     Text(
         text = weather.timezone.split("/")[1],
         style = primaryTypography.city,
         textAlign = TextAlign.Center,
         maxLines = 1,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
     )
 
@@ -195,7 +216,7 @@ private fun Header(weather: WeatherUi) {
         style = primaryTypography.temperature,
         textAlign = TextAlign.Center,
         maxLines = 1,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(start = 24.dp),
     )
@@ -209,7 +230,7 @@ private fun Header(weather: WeatherUi) {
         style = primaryTypography.description,
         textAlign = TextAlign.Center,
         maxLines = 1,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
     )
 
@@ -221,7 +242,36 @@ private fun Header(weather: WeatherUi) {
         style = primaryTypography.boundaries,
         textAlign = TextAlign.Center,
         maxLines = 1,
-        modifier = Modifier
+        modifier = modifier
+            .fillMaxWidth()
+    )
+}
+
+@Composable
+private fun HeaderSmall(
+    weather: WeatherUi,
+    modifier: Modifier = Modifier,
+) {
+
+    Text(
+        text = weather.timezone.split("/")[1],
+        style = primaryTypography.city,
+        textAlign = TextAlign.Center,
+        maxLines = 1,
+        modifier = modifier
+            .fillMaxWidth(),
+    )
+
+    Text(
+        text = stringResource(R.string.temperature, weather.today.temperature.toString()) + " | " + weather.today.description.replaceFirstChar {
+            it.titlecase(
+                Locale.ROOT
+            )
+        },
+        style = primaryTypography.description,
+        textAlign = TextAlign.Center,
+        maxLines = 1,
+        modifier = modifier
             .fillMaxWidth()
     )
 }
@@ -277,7 +327,6 @@ private fun BoxScope.BottomNavigationMenu(
 @Composable
 private fun HourlyCard(hours: List<HourlyUi>, todaySummary: String) {
     val listState = rememberLazyListState()
-
 
     Card(
         colors = CardDefaults.cardColors().copy(

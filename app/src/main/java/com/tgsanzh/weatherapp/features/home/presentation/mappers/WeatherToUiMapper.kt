@@ -9,6 +9,7 @@ import com.tgsanzh.weatherapp.features.home.presentation.DailyUi
 import com.tgsanzh.weatherapp.features.home.presentation.HourlyUi
 import com.tgsanzh.weatherapp.features.home.presentation.WeatherUi
 import java.time.Instant
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -21,6 +22,9 @@ fun Weather.toUi(): WeatherUi {
     return WeatherUi(
         timezone = timezone,
         timezoneOffset = timezoneOffset,
+        updatedAt = Instant.ofEpochMilli(updatedAt)
+            .atZone(ZoneId.systemDefault())
+            .format(DateTimeFormatter.ofPattern("dd.MM HH:mm")),
         today = dailyUi.first(),
         hourly = hourly.map { it.toUi(timezoneOffset) },
         daily = dailyUi
@@ -131,10 +135,10 @@ fun mapFeelsLikeByTime(feelsLike: FeelsLike, timezoneOffset: Int): Double {
     val hour = getCurrentHourAtLocation(timezoneOffset)
 
     return when (hour) {
-        in 6..11 -> feelsLike.morn     // утро
-        in 12..17 -> feelsLike.day     // день
-        in 18..21 -> feelsLike.eve     // вечер
-        else -> feelsLike.night        // ночь
+        in 6..11 -> feelsLike.morn
+        in 12..17 -> feelsLike.day
+        in 18..21 -> feelsLike.eve
+        else -> feelsLike.night
     }
 }
 
@@ -142,9 +146,9 @@ fun mapTempsToTemp(tempMorn: Double, tempDay: Double, tempEve: Double, tempNight
     val hour = getCurrentHourAtLocation(timezoneOffset)
 
     return when (hour) {
-        in 6..11 -> tempMorn     // утро
-        in 12..17 -> tempDay     // день
-        in 18..21 -> tempEve     // вечер
-        else -> tempNight        // ночь
+        in 6..11 -> tempMorn
+        in 12..17 -> tempDay
+        in 18..21 -> tempEve
+        else -> tempNight
     }
 }

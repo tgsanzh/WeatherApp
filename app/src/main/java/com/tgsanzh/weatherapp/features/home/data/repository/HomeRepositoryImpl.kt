@@ -25,7 +25,7 @@ class HomeRepositoryImpl(
     override fun observeWeather(): Flow<Weather> {
         return dao.observe()
             .filterNotNull()
-            .map { it.toDomain(converter) }
+            .map { it.toDomain(converter, it.updatedAt) }
     }
 
     override suspend fun refresh(): AppResult<Unit> {

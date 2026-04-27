@@ -13,10 +13,11 @@ import com.tgsanzh.weatherapp.features.home.domain.models.Temp
 import com.tgsanzh.weatherapp.features.home.domain.models.Weather
 import com.tgsanzh.weatherapp.features.home.domain.models.WeatherInfo
 
-fun OneCallResponseDto.toDomain(): Weather {
+fun OneCallResponseDto.toDomain(updatedAt: Long): Weather {
     return Weather(
         timezone = timezone,
         timezoneOffset = timezoneOffset,
+        updatedAt = updatedAt,
         hourly = hourly.map { it.toDomain() },
         daily = daily.map { it.toDomain() }
     )
