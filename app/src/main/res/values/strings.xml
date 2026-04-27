@@ -65,7 +65,7 @@
     <string name="pressure_unit">гПа</string>
 
     <!-- Поиск -->
-    <string name="search_hint">Поиск города или аэропорта</string>
+    <string name="search_hint">Поиск города</string>
 
     <!-- Меню -->
     <string name="edit_list">Изменить список</string>
@@ -89,5 +89,9 @@
     <string name="error_location_permission">Нет доступа к геолокации</string>
     <string name="error_location_disabled">Включите геолокацию</string>
     <string name="error_location_not_available">Не удалось определить местоположение</string>
+
+    <!-- Location Screen -->
+    <string name="weather_header">Погода</string>
+
 
 </resources>

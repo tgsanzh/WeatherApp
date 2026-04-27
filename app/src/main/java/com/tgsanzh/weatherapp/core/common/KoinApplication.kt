@@ -1,9 +1,10 @@
 package com.tgsanzh.weatherapp.core.common
 
 import android.app.Application
-import com.tgsanzh.weatherapp.core.location.di.locationModule
+import com.tgsanzh.weatherapp.core.location.di.getLocationModule
 import com.tgsanzh.weatherapp.di.networkModule
 import com.tgsanzh.weatherapp.features.home.di.homeModule
+import com.tgsanzh.weatherapp.features.locations.di.locationsModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -15,8 +16,9 @@ class KoinApplication: Application() {
             androidContext(this@KoinApplication)
             modules(
                 networkModule,
-                locationModule,
+                getLocationModule,
                 homeModule,
+                locationsModule,
             )
         }
     }

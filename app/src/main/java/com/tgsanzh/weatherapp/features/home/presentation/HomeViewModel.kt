@@ -44,6 +44,12 @@ class HomeViewModel(
                     )
                 }
             }
+
+            HomeEvent.NavigateToLocations -> {
+                viewModelScope.launch {
+                    _effect.emit(HomeEffect.NavigateToLocations)
+                }
+            }
         }
     }
 
