@@ -3,6 +3,7 @@ package com.tgsanzh.weatherapp.features.home.domain.models
 data class Weather(
     val timezone: String,
     val timezoneOffset: Int,
+    val updatedAt: Long,
     val hourly: List<Hourly>,
     val daily: List<Daily>
 )

@@ -4,7 +4,7 @@ import com.tgsanzh.weatherapp.features.home.data.local.entities.WeatherCacheEnti
 import com.tgsanzh.weatherapp.features.home.data.remote.mappers.toDomain
 import com.tgsanzh.weatherapp.features.home.domain.models.Weather
 
-fun WeatherCacheEntity.toDomain(converter: WeatherConverter): Weather {
+fun WeatherCacheEntity.toDomain(converter: WeatherConverter, updatedAt: Long): Weather {
     val dto = converter.toDto(responseJson)
-    return dto.toDomain()
+    return dto.toDomain(updatedAt)
 }

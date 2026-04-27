@@ -61,7 +61,6 @@ class HomeViewModel(
                         is AppResult.Error -> {
                             _state.update { current ->
                                 current.copy(
-                                    isLoading = false,
                                     error = weather.error
                                 )
                             }
@@ -70,7 +69,6 @@ class HomeViewModel(
                             _state.update { current ->
                                 current.copy(
                                     weather = weather.data.toUi(),
-                                    isLoading = false,
                                     error = null
                                 )
                             }
@@ -82,7 +80,11 @@ class HomeViewModel(
 
     private fun refresh() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true)
+            _state.update { current ->
+                current.copy(
+                    isLoading = true
+                )
+            }
 
             when (val result = refreshUseCase.refresh()) {
                 is AppResult.Error -> {
@@ -91,6 +93,11 @@ class HomeViewModel(
                             error = result.error,
                             isLoading = false
                         )
+                    }
+                    viewModelScope.launch {
+                        _effect.emit(HomeEffect.ShowSnackbar(
+                            "Could not get data, last updated ${state.value.weather?.updatedAt}"
+                        ))
                     }
                 }
                 is AppResult.Success -> {

@@ -13,23 +13,24 @@ data class HomeUiState(
 data class WeatherUi(
     val timezone: String,
     val timezoneOffset: Int,
+    val updatedAt: String,
     val today: DailyUi,
     val hourly: List<HourlyUi>,
     val daily: List<DailyUi>
 )
 
 data class HourlyUi(
-    val hour: String,   // "14"
+    val hour: String,
     val temp: Int,
     val iconRes: Int
 )
 
 data class DailyUi(
-    val dayOfWeek: String, // "ПН"
+    val dayOfWeek: String,
     val dt: Long,
 
-    val sunrise: String,   // "14:53"
-    val sunset: String,    // "20:11"
+    val sunrise: String,
+    val sunset: String,
 
     val moonrise: Long,
     val moonset: Long,
