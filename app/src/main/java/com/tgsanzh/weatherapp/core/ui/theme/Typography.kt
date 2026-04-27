@@ -6,9 +6,15 @@ import androidx.compose.ui.unit.sp
 
 data class PrimaryTypography(
     val temperature: TextStyle,
+    val temperatureSmall: TextStyle,
+    val bottomSheetText: TextStyle,
     val city: TextStyle,
+    val citySmall: TextStyle,
+    val header: TextStyle,
     val description: TextStyle,
+    val descriptionSmall: TextStyle,
     val boundaries: TextStyle,
+    val boundariesSmall: TextStyle,
     val body: TextStyle,
     val bodyNormal: TextStyle,
     val bodyTransparent: TextStyle,
@@ -22,9 +28,33 @@ val primaryTypography = PrimaryTypography(
         color = primaryColors.textPrimary,
     ),
 
+    temperatureSmall = TextStyle(
+        fontSize = 48.sp,
+        fontWeight = FontWeight.Light,
+        color = primaryColors.textPrimary,
+    ),
+
+    bottomSheetText = TextStyle(
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Bold,
+        color = primaryColors.textPrimary,
+    ),
+
     city = TextStyle(
         fontSize = 32.sp,
         fontWeight = FontWeight.Medium,
+        color = primaryColors.textPrimary,
+    ),
+
+    citySmall = TextStyle(
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Medium,
+        color = primaryColors.textPrimary,
+    ),
+
+    header = TextStyle(
+        fontSize = 36.sp,
+        fontWeight = FontWeight.Bold,
         color = primaryColors.textPrimary,
     ),
 
@@ -34,8 +64,20 @@ val primaryTypography = PrimaryTypography(
         color = primaryColors.textSecondary,
     ),
 
+    descriptionSmall = TextStyle(
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Normal,
+        color = primaryColors.textSecondary,
+    ),
+
     boundaries = TextStyle(
         fontSize = 20.sp,
+        fontWeight = FontWeight.Normal,
+        color = primaryColors.textPrimary,
+    ),
+
+    boundariesSmall = TextStyle(
+        fontSize = 16.sp,
         fontWeight = FontWeight.Normal,
         color = primaryColors.textPrimary,
     ),

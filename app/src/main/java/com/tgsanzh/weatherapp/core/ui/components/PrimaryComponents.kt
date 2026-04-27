@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import com.tgsanzh.weatherapp.core.ui.extentions.noRippleClickable
 import com.tgsanzh.weatherapp.core.ui.theme.primaryColors
 import com.tgsanzh.weatherapp.core.ui.theme.primaryTypography
 
@@ -74,5 +75,32 @@ fun PrimaryInformationCard(
 
             additionalContent()
         }
+    }
+}
+
+@Composable
+fun BasicBottomSheetItem(
+    trailingIcon: Painter,
+    text: String,
+    onClick: () -> (Unit)
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .noRippleClickable {
+                onClick()
+            }
+    ) {
+        Icon(
+            painter = trailingIcon,
+            contentDescription = text,
+            tint = primaryColors.textPrimary,
+            modifier = Modifier.padding(end = 12.dp)
+        )
+        Text(
+            text = text,
+            style = primaryTypography.bottomSheetText
+        )
     }
 }

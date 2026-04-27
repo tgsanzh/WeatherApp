@@ -5,10 +5,12 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -44,6 +47,7 @@ import com.tgsanzh.weatherapp.R
 import com.tgsanzh.weatherapp.core.error.toMessage
 import com.tgsanzh.weatherapp.core.ui.components.PrimaryCard
 import com.tgsanzh.weatherapp.core.ui.components.PrimaryInformationCard
+import com.tgsanzh.weatherapp.core.ui.extentions.noRippleClickable
 import com.tgsanzh.weatherapp.core.ui.theme.primaryColors
 import com.tgsanzh.weatherapp.core.ui.theme.primaryTypography
 import com.tgsanzh.weatherapp.features.home.presentation.mappers.WeatherBackgroundMapper
@@ -162,6 +166,12 @@ fun HomeScreen(state: HomeUiState, onEvent: (HomeEvent) -> (Unit)) {
                 }
             }
         }
+
+        BottomNavigationMenu(
+            onNavigateToLocations = {
+                onEvent(HomeEvent.NavigateToLocations)
+            }
+        )
     }
 }
 
@@ -214,6 +224,54 @@ private fun Header(weather: WeatherUi) {
         modifier = Modifier
             .fillMaxWidth()
     )
+}
+
+@Composable
+private fun BoxScope.BottomNavigationMenu(
+    onNavigateToLocations: () -> (Unit)
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .padding(24.dp)
+            .fillMaxWidth()
+            .align(Alignment.BottomCenter)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(44.dp)
+                .background(color = primaryColors.accentBlue, shape = CircleShape)
+                .border(width = 1.dp, color = primaryColors.whiteBorder, shape = CircleShape)
+        ) {
+            Icon(
+                painterResource(R.drawable.ic_map),
+                contentDescription = "Map",
+                tint = primaryColors.textPrimary,
+                modifier = Modifier
+                    .size(32.dp)
+                    .align(Alignment.Center)
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .size(44.dp)
+                .background(color = primaryColors.accentBlue, shape = CircleShape)
+                .border(width = 1.dp, color = primaryColors.whiteBorder, shape = CircleShape)
+        ) {
+            Icon(
+                painterResource(R.drawable.ic_list),
+                contentDescription = "Menu",
+                tint = primaryColors.textPrimary,
+                modifier = Modifier
+                    .size(32.dp)
+                    .align(Alignment.Center)
+                    .noRippleClickable {
+                        onNavigateToLocations()
+                    }
+            )
+        }
+    }
 }
 
 @Composable

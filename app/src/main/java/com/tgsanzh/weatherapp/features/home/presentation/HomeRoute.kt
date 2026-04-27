@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.collectAsState
+import com.tgsanzh.weatherapp.core.navigation.Destination
 
 @Composable
 fun HomeRoute(navController: NavController) {
@@ -12,8 +13,11 @@ fun HomeRoute(navController: NavController) {
 
     LaunchedEffect(Unit) {
         homeViewModel.effect.collect { effect ->
-            when(effect) {
+            when (effect) {
                 is HomeEffect.ShowSnackbar -> TODO()
+                HomeEffect.NavigateToLocations -> {
+                    navController.navigate(Destination.LOCATIONS.route)
+                }
             }
         }
     }
