@@ -28,7 +28,7 @@ val primaryColors = PrimaryColors(
     backgroundGradientBottom = Color(0xFF2C5EA8),
     backgroundBlue = Color(0xFF2B4F73),
 
-    card = Color(0xFF377DC3).copy(alpha = 0.6f),
+    card = Color(0xFF377DC3).copy(alpha = 1f),
     cardBorder = Color.White.copy(alpha = 0.2f),
 
     bottomSheet = Color(0xFF424D58).copy(alpha = 0.52f),
