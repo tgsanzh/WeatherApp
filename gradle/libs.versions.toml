@@ -20,6 +20,7 @@ serialization-dep = "1.11.0"
 loggingInterceptor = "5.3.2"
 converterKotlinxSerialization = "3.0.0"
 material3 = "1.4.0"
+chucker = "4.2.0"
 
 
 [libraries]
@@ -59,6 +60,10 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomKtx" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+
+# Chucker
+chucker-library = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
+chucker-library-no-op = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

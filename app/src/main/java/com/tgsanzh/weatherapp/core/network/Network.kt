@@ -1,33 +1,25 @@
 package com.tgsanzh.weatherapp.core.network
 
-import com.tgsanzh.weatherapp.BuildConfig
+import android.content.Context
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 
 fun getOkHttp(
-    networkConnectionInterceptor: NetworkConnectionInterceptor
-): OkHttpClient {
-    val logging = HttpLoggingInterceptor().apply {
-        level = if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor.Level.BODY
-        } else {
-            HttpLoggingInterceptor.Level.NONE
-        }
-    }
-
-    return OkHttpClient
+    networkConnectionInterceptor: NetworkConnectionInterceptor,
+    context: Context
+): OkHttpClient = OkHttpClient
         .Builder()
-        .addInterceptor(logging)
+        .addInterceptor(ChuckerInterceptor(context))
         .addInterceptor(networkConnectionInterceptor)
         .readTimeout(60_000, TimeUnit.MILLISECONDS)
         .writeTimeout(60_000, TimeUnit.MILLISECONDS)
         .build()
-}
+
 
 fun getJson(): Json {
     return Json {

@@ -90,6 +90,10 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
+    // Chucker
+    releaseImplementation(libs.chucker.library.no.op)
+    debugImplementation(libs.chucker.library)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
