@@ -28,6 +28,7 @@ class HomeViewModel(
 
     init {
         observeWeather()
+        refresh()
     }
 
     fun dispatch(event: HomeEvent) {
@@ -35,16 +36,6 @@ class HomeViewModel(
             HomeEvent.GetData -> {
                 refresh()
             }
-
-            HomeEvent.NoGpsPermission -> {
-                _state.update { current ->
-                    current.copy(
-                        isLoading = false,
-                        error = AppError.Location.NoPermission
-                    )
-                }
-            }
-
             HomeEvent.NavigateToLocations -> {
                 viewModelScope.launch {
                     _effect.emit(HomeEffect.NavigateToLocations)

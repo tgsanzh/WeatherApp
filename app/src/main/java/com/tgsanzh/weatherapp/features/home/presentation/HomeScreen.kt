@@ -74,17 +74,13 @@ fun HomeScreen(state: HomeUiState, onEvent: (HomeEvent) -> (Unit)) {
 
     val hourlySticked by remember {
         derivedStateOf {
-            lazyColumnState.firstVisibleItemIndex == 2
+            lazyColumnState.firstVisibleItemIndex >= 2
         }
     }
     val dailySticked by remember {
         derivedStateOf {
             lazyColumnState.firstVisibleItemIndex == 4
         }
-    }
-
-    LaunchedEffect(Unit) {
-        onEvent(HomeEvent.GetData)
     }
 
 
@@ -474,7 +470,7 @@ private fun ForecastEightDays(days: List<DailyUi>) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
             HorizontalDivider(
                 color = primaryColors.textPrimary.copy(alpha = 0.1f),
