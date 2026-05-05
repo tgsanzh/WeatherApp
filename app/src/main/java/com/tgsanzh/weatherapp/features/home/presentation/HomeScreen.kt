@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -39,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,7 +48,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tgsanzh.weatherapp.R
 import com.tgsanzh.weatherapp.core.error.toMessage
-import com.tgsanzh.weatherapp.core.ui.components.PrimaryCard
 import com.tgsanzh.weatherapp.core.ui.components.PrimaryInformationCard
 import com.tgsanzh.weatherapp.core.ui.extentions.noRippleClickable
 import com.tgsanzh.weatherapp.core.ui.theme.primaryColors
@@ -71,8 +72,15 @@ fun HomeScreen(state: HomeUiState, onEvent: (HomeEvent) -> (Unit)) {
         }
     }
 
-    LaunchedEffect(Unit) {
-        onEvent(HomeEvent.GetData)
+    val hourlySticked by remember {
+        derivedStateOf {
+            lazyColumnState.firstVisibleItemIndex >= 2
+        }
+    }
+    val dailySticked by remember {
+        derivedStateOf {
+            lazyColumnState.firstVisibleItemIndex == 4
+        }
     }
 
 
@@ -109,7 +117,9 @@ fun HomeScreen(state: HomeUiState, onEvent: (HomeEvent) -> (Unit)) {
                     )
                     HeaderSmall(
                         weather = state.weather,
-                        Modifier.alpha(1 - alpha).height(40.dp)
+                        Modifier
+                            .alpha(1 - alpha)
+                            .height(40.dp)
                     )
                     Spacer(
                         modifier = Modifier.height(8.dp)
@@ -119,10 +129,10 @@ fun HomeScreen(state: HomeUiState, onEvent: (HomeEvent) -> (Unit)) {
                 LazyColumn(
                     state = lazyColumnState,
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(vertical = 16.dp),
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
+                        .clip(shape = RoundedCornerShape(16.dp, 16.dp))
                         .fillMaxSize(),
                 ) {
                     if (!state.isLoading) {
@@ -132,15 +142,73 @@ fun HomeScreen(state: HomeUiState, onEvent: (HomeEvent) -> (Unit)) {
                                     weather = state.weather,
                                     modifier = Modifier.alpha(alpha)
                                 )
-                            }
-                            item {
                                 Spacer(
                                     Modifier.height(80.dp * (alpha))
                                 )
+                            }
+                            stickyHeader {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(
+                                            if (hourlySticked) {
+                                                RoundedCornerShape(16.dp)
+                                            } else {
+                                                RoundedCornerShape(
+                                                    topStart = 16.dp,
+                                                    topEnd = 16.dp,
+                                                    bottomStart = 0.dp,
+                                                    bottomEnd = 0.dp
+                                                )
+                                            }
+                                        )
+                                        .background(color = primaryColors.card)
+                                ) {
+                                    Text(
+                                        text = state.weather.today.summary,
+                                        style = primaryTypography.body,
+                                        modifier = Modifier.padding(16.dp)
+                                    )
+                                }
+                            }
+                            item {
                                 HourlyCard(
                                     hours = state.weather.hourly,
-                                    todaySummary = state.weather.today.summary
                                 )
+                                Spacer(modifier = Modifier.height(12.dp))
+                            }
+                            stickyHeader {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(
+                                            if (dailySticked) {
+                                                RoundedCornerShape(16.dp)
+                                            } else {
+                                                RoundedCornerShape(
+                                                    topStart = 16.dp,
+                                                    topEnd = 16.dp,
+                                                    bottomStart = 0.dp,
+                                                    bottomEnd = 0.dp
+                                                )
+                                            }
+                                        )
+                                        .background(color = primaryColors.card)
+                                        .padding(16.dp),
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_calendar),
+                                        contentDescription = "Calendar Icon",
+                                        tint = primaryColors.textTertiary,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.forecast_8_days),
+                                        style = primaryTypography.bodyTransparent,
+                                    )
+                                }
                             }
                             item {
                                 ForecastEightDays(
@@ -178,7 +246,9 @@ fun HomeScreen(state: HomeUiState, onEvent: (HomeEvent) -> (Unit)) {
                                             ?: "Загрузка данных невозможна",
                                         style = primaryTypography.city,
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth().padding(top = 400.dp)
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 400.dp)
                                     )
                                 }
                             }
@@ -325,28 +395,22 @@ private fun BoxScope.BottomNavigationMenu(
 }
 
 @Composable
-private fun HourlyCard(hours: List<HourlyUi>, todaySummary: String) {
+private fun HourlyCard(hours: List<HourlyUi>) {
     val listState = rememberLazyListState()
 
     Card(
         colors = CardDefaults.cardColors().copy(
             containerColor = primaryColors.card,
         ),
+        shape = RoundedCornerShape(0.dp, 0.dp, 16.dp, 16.dp),
         modifier = Modifier
             .fillMaxWidth()
     ) {
         Column(
             modifier = Modifier
+                .padding(16.dp, 0.dp, 16.dp, 16.dp)
                 .fillMaxSize()
-                .padding(16.dp)
         ) {
-            Text(
-                text = todaySummary,
-                style = primaryTypography.body
-            )
-            Spacer(
-                Modifier.height(16.dp)
-            )
             HorizontalDivider(
                 color = primaryColors.textPrimary.copy(alpha = 0.1f)
             )
@@ -398,6 +462,7 @@ private fun ForecastEightDays(days: List<DailyUi>) {
         colors = CardDefaults.cardColors().copy(
             containerColor = primaryColors.card,
         ),
+        shape = RoundedCornerShape(0.dp, 0.dp, 16.dp, 16.dp),
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 56.dp)
@@ -405,27 +470,11 @@ private fun ForecastEightDays(days: List<DailyUi>) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_calendar),
-                    contentDescription = "Calendar Icon",
-                    tint = primaryColors.textTertiary,
-                    modifier = Modifier.size(24.dp)
-                )
-                Text(
-                    text = stringResource(R.string.forecast_8_days),
-                    style = primaryTypography.bodyTransparent,
-                )
-            }
             HorizontalDivider(
                 color = primaryColors.textPrimary.copy(alpha = 0.1f),
-                modifier = Modifier.padding(vertical = 16.dp)
+                modifier = Modifier.padding(bottom = 16.dp)
             )
             Column(
                 modifier = Modifier
@@ -456,6 +505,7 @@ private fun ForecastEightDays(days: List<DailyUi>) {
             }
         }
     }
+    Spacer(Modifier.height(12.dp))
 }
 
 @Composable
@@ -559,11 +609,15 @@ private fun AverageAndFeelsLikeSection(today: DailyUi) {
             )
         }
     }
+    Spacer(Modifier.height(12.dp))
 }
 
 @Composable
 private fun WindSection(today: DailyUi) {
-    PrimaryCard (
+    Card (
+        colors = CardDefaults.cardColors().copy(
+            containerColor = primaryColors.card,
+        ),
         modifier = Modifier
             .fillMaxWidth()
     ) {
@@ -619,6 +673,8 @@ private fun WindSection(today: DailyUi) {
             )
         }
     }
+    Spacer(Modifier.height(12.dp))
+
 }
 
 @Composable
@@ -627,7 +683,8 @@ private fun WindRow(name: String, value: String) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(bottom = 4.dp),
     ) {
         Text(
             text = name,
@@ -666,6 +723,8 @@ private fun UvAndTimeSection(today: DailyUi) {
             )
         }
     }
+    Spacer(Modifier.height(12.dp))
+
 }
 
 @Composable
@@ -688,4 +747,5 @@ private fun HumidityAndPressureSection(today: DailyUi) {
             modifier = Modifier.weight(1f),
         )
     }
+
 }

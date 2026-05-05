@@ -25,7 +25,7 @@ val networkModule = module {
         AndroidNetworkChecker(androidContext())
     }
     single { NetworkConnectionInterceptor(get()) }
-    single { getOkHttp(get()) }
+    single { getOkHttp(get(), androidContext()) }
     single { getJson() }
     single { getRetrofit(get(), get()) }
 }
